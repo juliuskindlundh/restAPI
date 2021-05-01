@@ -3,9 +3,9 @@ package restAPI.Entity;
 import lombok.Data;
 import lombok.Generated;
 import lombok.NonNull;
+import org.hibernate.id.UUIDGenerator;
 
 import javax.persistence.Entity;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import java.io.Serializable;
 import java.util.UUID;
@@ -15,16 +15,13 @@ import java.util.UUID;
 public class Student implements Serializable {
     @Id
     @Generated
-    private String studentId;
+    private String studentId = UUID.randomUUID().toString();
 
-    @NonNull
     private String firstName;
-    @NonNull
     private String lastName;
-    @NonNull
     private int age;
-    @NonNull
     private boolean present;
 
-    public Student() {}
+    public Student() {
+    }
 }

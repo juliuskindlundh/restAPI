@@ -3,15 +3,11 @@ package restAPI.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import restAPI.Entity.Student;
-import restAPI.Service.Repository.StudentRepository;
+import restAPI.Repository.StudentRepository;
 import restAPI.Service.StudentService;
 
-import javax.swing.text.html.Option;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -31,12 +27,12 @@ public class StudentController {
     }
 
     @PostMapping("/students")
-    ResponseEntity<Student> createStudent(@RequestParam Student student) {
+    ResponseEntity<Student> createStudent(@RequestBody Student student) {
         Optional<Student> response = studentService.createStudent(student);
         if (response.isPresent()) {
             return ResponseEntity.status(HttpStatus.CREATED).body(response.get());
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
 
     @GetMapping("/students")
@@ -47,12 +43,19 @@ public class StudentController {
     }
 
     @GetMapping("/students/{id}")
-    ResponseEntity<Student> findById(@RequestParam String studentId){
-        Optional<Student> response = studentService.findById();
+    ResponseEntity<Student> findById(@PathVariable(name ="id") String studentId){
+        Optional<Student> response = studentService.findById(studentId);
         if(response.isPresent()){
-
+            return ResponseEntity.status(HttpStatus.OK).body(response.get());
         }
-        return null;
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
+
+    @PostMapping("/students/{id}")
+    ResponseEntity<Student> updateStudent(@PathVariable(name = "id") String studentId,@RequestBody Student student){
+        studentService.updateStudent(studentId,student);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
 
 }

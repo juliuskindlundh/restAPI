@@ -1,27 +1,65 @@
 package restAPI.Entity;
 
-import lombok.Data;
 import lombok.Generated;
-import lombok.NonNull;
-import org.hibernate.id.UUIDGenerator;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.io.Serializable;
 import java.util.UUID;
 
-@Data
 @Entity
-public class Student implements Serializable {
-    @Id
-    @Generated
+public class Student{
+    @Id @Generated
     private String studentId = UUID.randomUUID().toString();
-
+    @GeneratedValue(strategy =GenerationType.AUTO)
+    private int id;
     private String firstName;
     private String lastName;
     private int age;
     private boolean present;
-
-    public Student() {
-    }
+	public String getStudentId() {
+		return studentId;
+	}
+	public void setStudentId(String studentId) {
+		this.studentId = studentId;
+	}
+	public int getId() {
+		return id;
+	}
+	public void setId(int id) {
+		this.id = id;
+	}
+	public String getFirstName() {
+		return firstName;
+	}
+	public void setFirstName(String firstName) {
+		this.firstName = firstName;
+	}
+	public String getLastName() {
+		return lastName;
+	}
+	public void setLastName(String lastName) {
+		this.lastName = lastName;
+	}
+	public int getAge() {
+		return age;
+	}
+	public void setAge(int age) {
+		this.age = age;
+	}
+	public boolean isPresent() {
+		return present;
+	}
+	public void setPresent(boolean present) {
+		this.present = present;
+	}
+	
+	@Override
+	public String toString() {
+		return "Student [studentId=" + studentId + ", id=" + id + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", age=" + age + ", present=" + present + "]";
+	}
+    
+    
 }

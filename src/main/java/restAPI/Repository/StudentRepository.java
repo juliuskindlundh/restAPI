@@ -5,9 +5,8 @@ import org.springframework.stereotype.Repository;
 import restAPI.Entity.Student;
 
 import java.util.Optional;
-import java.util.UUID;
 
 @Repository
-public interface StudentRepository extends CrudRepository<Student, UUID> {
+public interface StudentRepository extends CrudRepository<Student, String> {
     Optional<Student> findByStudentId(String id);
 }

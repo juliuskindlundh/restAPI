@@ -2,10 +2,11 @@ package restAPI.Service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import restAPI.Entity.Student;
 import restAPI.Repository.StudentRepository;
 
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -13,46 +14,44 @@ import java.util.Optional;
 @Service
 public class StudentService {
 
-    @Autowired
-    private StudentRepository studentRepository;
+	@Autowired
+	private StudentRepository studentRepository;
 
-    public StudentService(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-    }
+	public Optional<Student> createStudent(Student student) {
+		// TODO make sum logics 5this
+		studentRepository.save(student);
+		Optional<Student> studentOptional = studentRepository.findByStudentId(student.getStudentId());
+		return studentOptional;
+	}
 
-    public Optional<Student> createStudent(Student student) {
-        studentRepository.save(student);
-        Optional<Student> studentOptional = studentRepository.findByStudentId(student.getStudentId());
-        return studentOptional;
-    }
+	public List<Student> findAll() {
+		List<Student> list = new ArrayList<Student>();
+		studentRepository.findAll().iterator().forEachRemaining(student -> list.add(student));
+		return list;
+	}
 
-    public List<Student> findAll() {
-        List<Student> list = new ArrayList<Student>();
-        studentRepository.findAll().iterator().forEachRemaining(student -> list.add(student));
-        return list;
-    }
+	public Optional<Student> findById(String studentId) {
+		return studentRepository.findByStudentId(studentId);
+	}
 
-    public Optional<Student> findById(String studentId) {
-        return studentRepository.findByStudentId(studentId);
-    }
+	@Transactional
+	public Optional<Student> updateStudent(String studentId, Student student) throws Exception {
+		Optional<Student> toUpdate = studentRepository.findByStudentId(studentId);
+		if (toUpdate.isPresent()) {
+			toUpdate.get().setAge(student.getAge());
+			toUpdate.get().setFirstName(student.getFirstName());
+			toUpdate.get().setFirstName(student.getFirstName());
+			toUpdate.get().setLastName(student.getLastName());
+			toUpdate.get().setPresent(student.isPresent());
+			studentRepository.save(toUpdate.get());
+			return toUpdate;
+		} else {
+			throw new Exception("Entity not found");
+		}
+	}
 
-    @Transactional
-    public void updateStudent(String studentId,Student student) {
-        Optional<Student> toUpdate = studentRepository.findByStudentId(studentId);
-        if(toUpdate.isPresent()){
-            if(student.getAge() != 0){
-                toUpdate.get().setAge(student.getAge());
-            }
-            if(student.getFirstName() != null || !student.getFirstName().equals("")){
-                toUpdate.get().setFirstName(student.getFirstName());
-            }
-            if(student.getFirstName() != null || !student.getFirstName().equals("")){
-                toUpdate.get().setFirstName(student.getFirstName());
-            }
-            if(student.getLastName() != null || !student.getLastName().equals("")){
-                toUpdate.get().setLastName(student.getLastName());
-            }
-            toUpdate.get().setPresent(student.isPresent());
-        }
-    }
+	public void deleteById(String studentId) {
+		studentRepository.deleteById(studentId);
+		
+	}
 }

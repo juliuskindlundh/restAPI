@@ -3,6 +3,7 @@ package restAPI.Controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import restAPI.Entity.Student;
 import restAPI.Repository.StudentRepository;
@@ -13,18 +14,11 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@CrossOrigin
 public class StudentController {
 
     @Autowired
-    private StudentRepository studentRepository;
-
-    @Autowired
     private StudentService studentService;
-
-
-    public StudentController(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-    }
 
     @PostMapping("/students")
     ResponseEntity<Student> createStudent(@RequestBody Student student) {
@@ -34,7 +28,8 @@ public class StudentController {
         }
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
     }
-
+    
+   
     @GetMapping("/students")
     ResponseEntity<List<Student>> findAll(){
         List<Student> list = new ArrayList<Student>();
@@ -51,10 +46,22 @@ public class StudentController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
-    @PostMapping("/students/{id}")
+    @Transactional
+    @RequestMapping(value="/students/{id}",produces ="application/json",method= {RequestMethod.PUT})
     ResponseEntity<Student> updateStudent(@PathVariable(name = "id") String studentId,@RequestBody Student student){
-        studentService.updateStudent(studentId,student);
-        return ResponseEntity.status(HttpStatus.OK).build();
+    	Optional<Student> response;
+		try {
+			response = studentService.updateStudent(studentId,student);
+			return ResponseEntity.status(HttpStatus.OK).body(response.get());
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.I_AM_A_TEAPOT).build();  
+		}	
+    }
+    
+    @RequestMapping(value="/students/{id}",method= {RequestMethod.DELETE})
+    ResponseEntity<Object> deleteStudent(@PathVariable(name="id") String studentId) {
+    	studentService.deleteById(studentId);
+		return ResponseEntity.ok(null);
     }
 
 
